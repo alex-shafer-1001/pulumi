@@ -390,7 +390,7 @@ jobs:
         with:
           directory: coverage
           files: '*'
-          fail_ci_if_error: false
+          fail_ci_if_error: true
           verbose: true
       - name: Summarize Test Time by Package
         run: |
