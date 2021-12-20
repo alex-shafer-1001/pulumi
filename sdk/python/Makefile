@@ -16,16 +16,18 @@ include ../../build/common.mk
 # `test_all` without the dependencies.
 TEST_ALL_DEPS = build
 
+export PATH:=venv/bin:$(PATH)
+
 ensure::
 	$(PYTHON) -m venv venv
-	venv/bin/python -m pip install -r requirements.txt
+	python -m pip install -r requirements.txt
 	mkdir -p $(PYENVSRC)
 
 build_package::
 	rm -rf $(PYENVSRC) && cp -R ./lib/. $(PYENVSRC)/
 	sed -i.bak "s/\$${VERSION}/$(PYPI_VERSION)/g" $(PYENVSRC)/setup.py && rm $(PYENVSRC)/setup.py.bak
 	cp ../../README.md $(PYENVSRC)
-	cd $(PYENVSRC) && ../../venv/bin/python setup.py build bdist_wheel --universal
+	cd $(PYENVSRC) && python setup.py build bdist_wheel --universal
 
 build_plugin::
 	go install -ldflags "-X github.com/pulumi/pulumi/sdk/v3/go/common/version.Version=${VERSION}" ${LANGHOST_PKG}
@@ -33,8 +35,8 @@ build_plugin::
 build:: build_package build_plugin
 
 lint::
-	MYPYPATH=./stubs venv/bin/python -m mypy ./lib/pulumi --config-file=mypy.ini
-	venv/bin/python -m pylint ./lib/pulumi --rcfile=.pylintrc
+	MYPYPATH=./stubs python -m mypy ./lib/pulumi --config-file=mypy.ini
+	python -m pylint ./lib/pulumi --rcfile=.pylintrc
 
 install_package:: build_package
 	cp ./cmd/pulumi-language-python-exec "$(PULUMI_BIN)"
@@ -49,7 +51,7 @@ install:: install_package install_plugin
 
 test_fast:: $(TEST_ALL_DEPS)
 	$(GO_TEST) ${PROJECT_PKGS}
-	venv/bin/python -m pip install -e ./env/src
+	python -m pip install -e ./env/src
 	# TODO the ignored test seems to fail in pytest but not unittest. Need to trackdown why
 	$(TESTSUITE_SKIPPED) python/lib/test || \
 		coverage run -m pytest lib/test --ignore lib/test/automation --ignore lib/test/langhost/resource_thens/test_resource_thens.py
