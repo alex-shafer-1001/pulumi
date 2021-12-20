@@ -270,24 +270,6 @@ jobs:
           mkdir -p bin
           mv pulumi-bin/pulumi/* bin/
           rm -rf pulumi-bin
-      - name: Uninstall pre-installed Pulumi (windows)
-        if: ${{ matrix.platform == 'windows-latest' }}
-        run: |
-          chocolatey uninstall pulumi
-      - name: Install Pulumi Go Binaries (windows)
-        if: ${{ matrix.platform == 'windows-latest' }}
-        run: |
-          mkdir -p bin
-          unzip -d bin artifacts/go/*.zip
-          mv $PWD/bin/pulumi/bin/* $PWD/bin
-      - name: Verify Pulumi Version
-        run: |
-          which pulumi
-          pulumi version
-          find ./bin
-      - name: Diagnose System Path
-        run: |
-          python scripts/path.py
       - name: Install Pulumi Go Binaries (windows)
         if: ${{ matrix.platform == 'windows-latest' }}
         run: |
