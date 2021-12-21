@@ -434,10 +434,12 @@ jobs:
           PULUMI_LOCAL_NUGET: ${{ github.workspace }}/nuget
           PULUMI_ROOT: ${{ runner.temp }}/opt/pulumi
       - name: Merge Go coverage data
+        if: ${{ matrix.platform != 'windows-latest' }}
         run: |
           pulumictl cover merge --in ./coverage --out ./coverage/go-all.txt
           rm ./coverage/*.cov
       - name: Upload code coverage
+        if: ${{ matrix.platform != 'windows-latest' }}
         uses: codecov/codecov-action@v2
         with:
           directory: coverage
