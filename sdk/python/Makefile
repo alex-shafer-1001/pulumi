@@ -16,20 +16,17 @@ include ../../build/common.mk
 # `test_all` without the dependencies.
 TEST_ALL_DEPS = build
 
-export PATH:=venv/bin:$(PATH)
-
-ensure:: venv
-	mkdir -p $(PYENVSRC)
-
-venv: requirements.txt
+ensure::
 	$(PYTHON) -m venv venv
-	python -m pip install -r requirements.txt
+	. venv/*/activate && python -m pip install -r requirements.txt
+	mkdir -p $(PYENVSRC)
 
 build_package::
 	rm -rf $(PYENVSRC) && cp -R ./lib/. $(PYENVSRC)/
 	sed -i.bak "s/\$${VERSION}/$(PYPI_VERSION)/g" $(PYENVSRC)/setup.py && rm $(PYENVSRC)/setup.py.bak
 	cp ../../README.md $(PYENVSRC)
-	cd $(PYENVSRC) && python setup.py build bdist_wheel --universal
+	. venv/*/activate && cd $(PYENVSRC) && \
+		python setup.py build bdist_wheel --universal
 
 build_plugin::
 	go install -ldflags "-X github.com/pulumi/pulumi/sdk/v3/go/common/version.Version=${VERSION}" ${LANGHOST_PKG}
@@ -37,8 +34,10 @@ build_plugin::
 build:: build_package build_plugin
 
 lint::
-	MYPYPATH=./stubs python -m mypy ./lib/pulumi --config-file=mypy.ini
-	python -m pylint ./lib/pulumi --rcfile=.pylintrc
+	. venv/*/activate && \
+		MYPYPATH=./stubs python -m mypy ./lib/pulumi --config-file=mypy.ini
+	. venv/*/activate && \
+		python -m pylint ./lib/pulumi --rcfile=.pylintrc
 
 install_package:: build_package
 	cp ./cmd/pulumi-language-python-exec "$(PULUMI_BIN)"
@@ -51,29 +50,8 @@ install_plugin:: build_plugin
 
 install:: install_package install_plugin
 
-install_local_pysdk:: venv
-	make --version
-	which python
-	echo $$PATH
-
-	python -m pip install -e $(PYENVSRC)
-
-	python -c 'import pulumi; print(pulumi.__file__)'
-	python -c 'import sys; print(sys.executable)'
-
-	python3 -c 'import pulumi; print(pulumi.__file__)' || echo "no python3"
-	python3 -c 'import sys; print(sys.executable)'     || echo "no python3"
-
-	PATH=venv/bin:$$PATH python -c 'import pulumi; print(pulumi.__file__)'
-	PATH=venv/bin:$$PATH python -c 'import sys; print(sys.executable)'
-
-	PATH=venv/bin:$$PATH python3 -c 'import pulumi; print(pulumi.__file__)' || echo "no python3"
-	PATH=venv/bin:$$PATH python3 -c 'import sys; print(sys.executable)' || echo "no python3"
-
-	ls venv/bin
-
-	stat venv/bin/python
-	stat venv/bin/python3
+install_local_pysdk::
+	. venv/*/activate && python -m pip install -e $(PYENVSRC)
 
 test_go:: $(TEST_ALL_DEPS)
 	$(GO_TEST) ${PROJECT_PKGS}
@@ -81,21 +59,26 @@ test_go:: $(TEST_ALL_DEPS)
 test_fast:: $(TEST_ALL_DEPS) install_local_pysdk
 	# TODO the ignored test seems to fail in pytest but not unittest. Need to trackdown why
 	$(TESTSUITE_SKIPPED) python/lib/test || \
+		. venv/*/activate && \
 		coverage run -m pytest lib/test --ignore lib/test/automation --ignore lib/test/langhost/resource_thens/test_resource_thens.py
 	$(TESTSUITE_SKIPPED) python/lib/test/langhost/resource_thens || \
+		. venv/*/activate && \
 		coverage run -m unittest lib/test/langhost/resource_thens/test_resource_thens.py
 	# Using python -m also adds lib/test_with_mocks to sys.path which avoids package resolution issues.
-	pushd lib/test_with_mocks; $(TESTSUITE_SKIPPED) python/lib/test_with_mocks || \
-		PATH=../../venv/bin:$$PATH coverage run -m pytest; popd
+	$(TESTSUITE_SKIPPED) python/lib/test_with_mocks || \
+		. venv/*/activate && \
+		cd lib/test_with_mocks && \
+		coverage run -m pytest
 ifneq ($(PULUMI_TEST_COVERAGE_PATH),)
-	if [ -e .coverage ]; then coverage xml -o $(PULUMI_TEST_COVERAGE_PATH)/python-fast.xml; fi
+	if [ -e .coverage ]; then . venv/*/activate && coverage xml -o $(PULUMI_TEST_COVERAGE_PATH)/python-fast.xml; fi
 endif
 
 test_auto:: $(TEST_ALL_DEPS) install_local_pysdk
 	$(TESTSUITE_SKIPPED) auto-python || \
+		. venv/*/activate && \
 		coverage run -m pytest lib/test/automation
 ifneq ($(PULUMI_TEST_COVERAGE_PATH),)
-	if [ -e .coverage ]; then coverage xml -o $(PULUMI_TEST_COVERAGE_PATH)/python-auto.xml; fi
+	if [ -e .coverage ]; then . venv/*/activate && coverage xml -o $(PULUMI_TEST_COVERAGE_PATH)/python-auto.xml; fi
 endif
 
 test_all:: test_fast test_auto test_go
