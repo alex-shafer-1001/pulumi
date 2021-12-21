@@ -175,6 +175,7 @@ jobs:
         run: |
           echo "PULUMI_TEST_SUBSET=${{ matrix.test-subset }}" >> $GITHUB_ENV
       - name: Enable code coverage
+        if: ${{ matrix.platform != 'windows-latest' }}
         run: |
           echo "PULUMI_TEST_COVERAGE_PATH=$(pwd)/coverage" >> $GITHUB_ENV
       - name: Set up Make (windows)
