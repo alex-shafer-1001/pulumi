@@ -453,4 +453,5 @@ jobs:
           goteststats -statistic pkg-time test-results/*.json
       - name: Summarize Test Times by Indivudal Test
         run: |
-          goteststats -statistic test-time test-results/*.json | head -n 100
+          goteststats -statistic test-time test-results/*.json | head -n 100 || \
+                      if [[ $? -eq 141 ]]; then true; else exit $?; fi
