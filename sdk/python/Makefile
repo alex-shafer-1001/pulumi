@@ -60,12 +60,7 @@ test_fast:: $(TEST_ALL_DEPS) install_local_pysdk
 	./scripts/test_fast.sh
 
 test_auto:: $(TEST_ALL_DEPS) install_local_pysdk
-	$(TESTSUITE_SKIPPED) auto-python || \
-		. venv/*/activate && \
-		coverage run -m pytest lib/test/automation
-ifneq ($(PULUMI_TEST_COVERAGE_PATH),)
-	if [ -e .coverage ]; then . venv/*/activate && coverage xml -o $(PULUMI_TEST_COVERAGE_PATH)/python-auto.xml; fi
-endif
+	./scripts/test_auto.sh
 
 test_all:: test_fast test_auto test_go
 
