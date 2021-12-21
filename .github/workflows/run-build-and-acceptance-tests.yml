@@ -328,6 +328,27 @@ jobs:
         run: |
            cd sdk/python
            make build_package
+      - name: python sdk fast tests
+        run: cd sdk/python && make TEST_ALL_DEPS= test_fast
+        env:
+          PULUMI_HOME: ${{ github.workspace }}/home
+          PULUMI_NODE_MODULES: ${{ runner.temp }}/opt/pulumi/node_modules
+          PULUMI_LOCAL_NUGET: ${{ github.workspace }}/nuget
+          PULUMI_ROOT: ${{ runner.temp }}/opt/pulumi
+      - name: python sdk auto tests
+        run: cd sdk/python && make TEST_ALL_DEPS= test_auto
+        env:
+          PULUMI_HOME: ${{ github.workspace }}/home
+          PULUMI_NODE_MODULES: ${{ runner.temp }}/opt/pulumi/node_modules
+          PULUMI_LOCAL_NUGET: ${{ github.workspace }}/nuget
+          PULUMI_ROOT: ${{ runner.temp }}/opt/pulumi
+      - name: python sdk go tests
+        run: cd sdk/python && make TEST_ALL_DEPS= test_go
+        env:
+          PULUMI_HOME: ${{ github.workspace }}/home
+          PULUMI_NODE_MODULES: ${{ runner.temp }}/opt/pulumi/node_modules
+          PULUMI_LOCAL_NUGET: ${{ github.workspace }}/nuget
+          PULUMI_ROOT: ${{ runner.temp }}/opt/pulumi
       - name: dotnet sdk tests
         run: cd sdk/dotnet && make TEST_ALL_DEPS= dotnet_test
         env:
@@ -372,27 +393,6 @@ jobs:
           PULUMI_ROOT: ${{ runner.temp }}/opt/pulumi
       - name: node sdk go tests
         run: cd sdk/nodejs && make TEST_ALL_DEPS= go_tests
-        env:
-          PULUMI_HOME: ${{ github.workspace }}/home
-          PULUMI_NODE_MODULES: ${{ runner.temp }}/opt/pulumi/node_modules
-          PULUMI_LOCAL_NUGET: ${{ github.workspace }}/nuget
-          PULUMI_ROOT: ${{ runner.temp }}/opt/pulumi
-      - name: python sdk fast tests
-        run: cd sdk/python && make TEST_ALL_DEPS= test_fast
-        env:
-          PULUMI_HOME: ${{ github.workspace }}/home
-          PULUMI_NODE_MODULES: ${{ runner.temp }}/opt/pulumi/node_modules
-          PULUMI_LOCAL_NUGET: ${{ github.workspace }}/nuget
-          PULUMI_ROOT: ${{ runner.temp }}/opt/pulumi
-      - name: python sdk auto tests
-        run: cd sdk/python && make TEST_ALL_DEPS= test_auto
-        env:
-          PULUMI_HOME: ${{ github.workspace }}/home
-          PULUMI_NODE_MODULES: ${{ runner.temp }}/opt/pulumi/node_modules
-          PULUMI_LOCAL_NUGET: ${{ github.workspace }}/nuget
-          PULUMI_ROOT: ${{ runner.temp }}/opt/pulumi
-      - name: python sdk go tests
-        run: cd sdk/python && make TEST_ALL_DEPS= test_go
         env:
           PULUMI_HOME: ${{ github.workspace }}/home
           PULUMI_NODE_MODULES: ${{ runner.temp }}/opt/pulumi/node_modules
