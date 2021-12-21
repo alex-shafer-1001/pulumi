@@ -328,9 +328,6 @@ jobs:
         run: |
            cd sdk/python
            make build_package
-      - name: Ensure coverage gathering dependencies
-        run: |
-           make ensure_cover
       - name: dotnet sdk tests
         run: cd sdk/dotnet && make TEST_ALL_DEPS= dotnet_test
         env:
