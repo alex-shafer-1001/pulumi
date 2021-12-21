@@ -18,10 +18,12 @@ TEST_ALL_DEPS = build
 
 export PATH:=venv/bin:$(PATH)
 
-ensure::
+ensure:: venv
+	mkdir -p $(PYENVSRC)
+
+venv: requirements.txt
 	$(PYTHON) -m venv venv
 	python -m pip install -r requirements.txt
-	mkdir -p $(PYENVSRC)
 
 build_package::
 	rm -rf $(PYENVSRC) && cp -R ./lib/. $(PYENVSRC)/
@@ -49,8 +51,11 @@ install_plugin:: build_plugin
 
 install:: install_package install_plugin
 
-install_local_pysdk::
-	python -m pip install -e ./env/src
+install_local_pysdk:: venv
+	which python
+	python -m pip install -e $(PYENVSRC)
+	python -c 'import pulumi; print(pulumi.__file__)'
+	python -c 'import sys; print(sys.executable)'
 
 test_go:: $(TEST_ALL_DEPS)
 	$(GO_TEST) ${PROJECT_PKGS}
