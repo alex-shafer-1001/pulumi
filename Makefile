@@ -115,10 +115,13 @@ test_build:: $(TEST_ALL_DEPS)
 	cd tests/integration/construct_component_methods_errors/testcomponent-go && go build -o pulumi-resource-testcomponent
 	cd tests/integration/construct_component_methods_errors/testcomponent-python && $(PYTHON) -m venv venv && venv/bin/python -m pip install -e ../../../../sdk/python/env/src
 
-test_all:: test_build
-	cd pkg && $(GO_TEST) ${PROJECT_PKGS}
-	cd tests && $(GO_TEST) -p=1 ${TESTS_PKGS}
+test_all:: test_build test_pkg test_integration
 
+test_pkg::
+	cd pkg && $(GO_TEST) ${PROJECT_PKGS}
+
+test_integration::
+	cd tests && $(GO_TEST) -p=1 ${TESTS_PKGS}
 
 check_python_version::
 	python --version

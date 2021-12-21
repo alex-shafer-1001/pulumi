@@ -65,11 +65,13 @@ ifneq ($(PULUMI_TEST_COVERAGE_PATH),)
 endif
 	$(GO_TEST_FAST) ${PROJECT_PKGS}
 
-test_all:: sxs_tests unit_tests auto_tests
+go_tests:: $(TEST_ALL_DEPS)
+	$(GO_TEST) ${PROJECT_PKGS}
+
+test_all:: sxs_tests unit_tests auto_tests go_tests
 ifneq ($(PULUMI_TEST_COVERAGE_PATH),)
 	if [ -e .nyc_output ]; then nyc report -r cobertura --report-dir $(PULUMI_TEST_COVERAGE_PATH); fi
 endif
-	$(GO_TEST) ${PROJECT_PKGS}
 
 dist:: build
 	go install -ldflags "-X github.com/pulumi/pulumi/sdk/v3/go/common/version.Version=${VERSION}" ${LANGUAGE_HOST}

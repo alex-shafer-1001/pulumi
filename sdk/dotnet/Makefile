@@ -58,8 +58,10 @@ auto_test:: $(TEST_ALL_DEPS)
 test_fast:: dotnet_test
 	$(GO_TEST_FAST) ${PROJECT_PKGS}
 
-test_all:: dotnet_test auto_test
+go_test:: $(TEST_ALL_DEPS)
 	$(GO_TEST) ${PROJECT_PKGS}
+
+test_all:: dotnet_test auto_test go_test
 
 dist::
 	go install -ldflags "-X github.com/pulumi/pulumi/sdk/v3/go/common/version.Version=${DOTNET_VERSION}" ${LANGHOST_PKG}

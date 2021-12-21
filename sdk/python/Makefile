@@ -49,9 +49,13 @@ install_plugin:: build_plugin
 
 install:: install_package install_plugin
 
-test_fast:: $(TEST_ALL_DEPS)
-	$(GO_TEST) ${PROJECT_PKGS}
+install_local_pysdk::
 	python -m pip install -e ./env/src
+
+test_go:: $(TEST_ALL_DEPS)
+	$(GO_TEST) ${PROJECT_PKGS}
+
+test_fast:: $(TEST_ALL_DEPS) install_local_pysdk
 	# TODO the ignored test seems to fail in pytest but not unittest. Need to trackdown why
 	$(TESTSUITE_SKIPPED) python/lib/test || \
 		coverage run -m pytest lib/test --ignore lib/test/automation --ignore lib/test/langhost/resource_thens/test_resource_thens.py
@@ -63,15 +67,14 @@ ifneq ($(PULUMI_TEST_COVERAGE_PATH),)
 	if [ -e .coverage ]; then coverage xml -o $(PULUMI_TEST_COVERAGE_PATH)/python-fast.xml; fi
 endif
 
-test_auto:: test_fast $(TEST_ALL_DEPS)
-	# Note that this target depends on test-fast for the call to `pip install`
+test_auto:: $(TEST_ALL_DEPS) install_local_pysdk
 	$(TESTSUITE_SKIPPED) auto-python || \
 		coverage run -m pytest lib/test/automation
 ifneq ($(PULUMI_TEST_COVERAGE_PATH),)
 	if [ -e .coverage ]; then coverage xml -o $(PULUMI_TEST_COVERAGE_PATH)/python-auto.xml; fi
 endif
 
-test_all:: test_fast test_auto
+test_all:: test_fast test_auto test_go
 
 dist::
 	go install -ldflags "-X github.com/pulumi/pulumi/sdk/v3/go/common/version.Version=${VERSION}" ${LANGHOST_PKG}
