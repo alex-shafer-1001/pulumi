@@ -47,9 +47,15 @@ install_plugin:: build
 install:: install_package install_plugin
 
 unit_tests:: $(TEST_ALL_DEPS)
-	$(TESTSUITE_SKIPPED) --skip-windows unit-nodejs || nyc -x 'bin/tests/runtime/*ClosureCases*.js' -s mocha --timeout 120000 --exclude 'bin/tests/automation/**/*.spec.js' --exclude 'bin/tests/runtime/closureLoader.spec.js' 'bin/tests/**/*.spec.js'
-	$(TESTSUITE_SKIPPED) --skip-windows unit-nodejs || mocha --timeout 120000 'bin/tests/runtime/closureLoader.spec.js'
-	$(TESTSUITE_SKIPPED) --skip-windows unit-with-mocks-nodejs nyc -s mocha 'bin/tests_with_mocks/**/*.spec.js'
+	$(TESTSUITE_SKIPPED) --skip-windows unit-nodejs || \
+		nyc -x 'bin/tests/runtime/*ClosureCases*.js' -s mocha --timeout 120000 \
+			--exclude 'bin/tests/automation/**/*.spec.js' \
+			--exclude 'bin/tests/runtime/closureLoader.spec.js' \
+			'bin/tests/**/*.spec.js'
+	$(TESTSUITE_SKIPPED) --skip-windows unit-nodejs || \
+		mocha --timeout 120000 'bin/tests/runtime/closureLoader.spec.js'
+	$(TESTSUITE_SKIPPED) --skip-windows unit-with-mocks-nodejs || \
+		nyc -s mocha 'bin/tests_with_mocks/**/*.spec.js'
 
 auto_tests:: $(TEST_ALL_DEPS)
 	$(TESTSUITE_SKIPPED) --skip-windows auto-nodejs || nyc -s mocha --timeout 120000 'bin/tests/automation/**/*.spec.js'
