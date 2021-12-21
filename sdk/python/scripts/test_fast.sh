@@ -11,10 +11,10 @@ SKIP="../../scripts/skipped.py"
 # TODO the ignored test seems to fail in pytest but not unittest. Need
 # to trackdown why.
 
-# python "$SKIP" python/lib/test || \
-#     coverage run -m pytest lib/test \
-#              --ignore lib/test/automation \
-#              --ignore lib/test/langhost/resource_thens/test_resource_thens.py
+python "$SKIP" python/lib/test || \
+    coverage run -m pytest lib/test \
+             --ignore lib/test/automation \
+             --ignore lib/test/langhost/resource_thens/test_resource_thens.py
 
 python "$SKIP" python/lib/test/langhost/resource_thens || \
     coverage run -m unittest \

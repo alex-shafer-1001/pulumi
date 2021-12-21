@@ -27,6 +27,7 @@ build_package::
 	cp ../../README.md $(PYENVSRC)
 	. venv/*/activate && cd $(PYENVSRC) && \
 		python setup.py build bdist_wheel --universal
+	. venv/*/activate && python -m pip install -e $(PYENVSRC)
 
 build_plugin::
 	go install -ldflags "-X github.com/pulumi/pulumi/sdk/v3/go/common/version.Version=${VERSION}" ${LANGHOST_PKG}
@@ -50,16 +51,13 @@ install_plugin:: build_plugin
 
 install:: install_package install_plugin
 
-install_local_pysdk::
-	. venv/*/activate && python -m pip install -e $(PYENVSRC)
-
 test_go:: $(TEST_ALL_DEPS)
 	$(GO_TEST) ${PROJECT_PKGS}
 
-test_fast:: $(TEST_ALL_DEPS) install_local_pysdk
+test_fast:: $(TEST_ALL_DEPS)
 	./scripts/test_fast.sh
 
-test_auto:: $(TEST_ALL_DEPS) install_local_pysdk
+test_auto:: $(TEST_ALL_DEPS)
 	./scripts/test_auto.sh
 
 test_all:: test_fast test_auto test_go
