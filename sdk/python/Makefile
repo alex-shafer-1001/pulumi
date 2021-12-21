@@ -52,10 +52,28 @@ install_plugin:: build_plugin
 install:: install_package install_plugin
 
 install_local_pysdk:: venv
+	make --version
 	which python
+	echo $$PATH
+
 	python -m pip install -e $(PYENVSRC)
+
 	python -c 'import pulumi; print(pulumi.__file__)'
 	python -c 'import sys; print(sys.executable)'
+
+	python3 -c 'import pulumi; print(pulumi.__file__)'
+	python3 -c 'import sys; print(sys.executable)'
+
+	PATH=venv/bin:$$PATH python -c 'import pulumi; print(pulumi.__file__)'
+	PATH=venv/bin:$$PATH python -c 'import sys; print(sys.executable)'
+
+	PATH=venv/bin:$$PATH python3 -c 'import pulumi; print(pulumi.__file__)'
+	PATH=venv/bin:$$PATH python3 -c 'import sys; print(sys.executable)'
+
+	ls venv/bin
+
+	stat venv/bin/python
+	stat venv/bin/python3
 
 test_go:: $(TEST_ALL_DEPS)
 	$(GO_TEST) ${PROJECT_PKGS}
