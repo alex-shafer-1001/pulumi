@@ -62,7 +62,8 @@ test_fast:: $(TEST_ALL_DEPS) install_local_pysdk
 	$(TESTSUITE_SKIPPED) python/lib/test/langhost/resource_thens || \
 		coverage run -m unittest lib/test/langhost/resource_thens/test_resource_thens.py
 	# Using python -m also adds lib/test_with_mocks to sys.path which avoids package resolution issues.
-	pushd lib/test_with_mocks; $(TESTSUITE_SKIPPED) python/lib/test_with_mocks || coverage run -m pytest; popd
+	pushd lib/test_with_mocks; $(TESTSUITE_SKIPPED) python/lib/test_with_mocks || \
+		PATH=../../venv/bin:$$PATH coverage run -m pytest; popd
 ifneq ($(PULUMI_TEST_COVERAGE_PATH),)
 	if [ -e .coverage ]; then coverage xml -o $(PULUMI_TEST_COVERAGE_PATH)/python-fast.xml; fi
 endif
