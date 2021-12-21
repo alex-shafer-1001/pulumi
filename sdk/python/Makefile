@@ -68,8 +68,7 @@ install_local_pysdk:: venv
 	PATH=venv/bin:$$PATH python -c 'import sys; print(sys.executable)'
 
 	PATH=venv/bin:$$PATH python3 -c 'import pulumi; print(pulumi.__file__)' || echo "no python3"
-	PATH=venv/bin:$$PATH python3 -c 'import sys; print(sys.executable)' || echo
- no python3"
+	PATH=venv/bin:$$PATH python3 -c 'import sys; print(sys.executable)' || echo "no python3"
 
 	ls venv/bin
 
