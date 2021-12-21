@@ -57,21 +57,7 @@ test_go:: $(TEST_ALL_DEPS)
 	$(GO_TEST) ${PROJECT_PKGS}
 
 test_fast:: $(TEST_ALL_DEPS) install_local_pysdk
-	# TODO the ignored test seems to fail in pytest but not unittest. Need to trackdown why
-	$(TESTSUITE_SKIPPED) python/lib/test || \
-		. venv/*/activate && \
-		coverage run -m pytest lib/test --ignore lib/test/automation --ignore lib/test/langhost/resource_thens/test_resource_thens.py
-	$(TESTSUITE_SKIPPED) python/lib/test/langhost/resource_thens || \
-		. venv/*/activate && \
-		coverage run -m unittest lib/test/langhost/resource_thens/test_resource_thens.py
-	# Using python -m also adds lib/test_with_mocks to sys.path which avoids package resolution issues.
-	$(TESTSUITE_SKIPPED) python/lib/test_with_mocks || \
-		. venv/*/activate && \
-		cd lib/test_with_mocks && \
-		coverage run -m pytest
-ifneq ($(PULUMI_TEST_COVERAGE_PATH),)
-	if [ -e .coverage ]; then . venv/*/activate && coverage xml -o $(PULUMI_TEST_COVERAGE_PATH)/python-fast.xml; fi
-endif
+	./scripts/test_fast.sh
 
 test_auto:: $(TEST_ALL_DEPS) install_local_pysdk
 	$(TESTSUITE_SKIPPED) auto-python || \
