@@ -18,9 +18,13 @@ except ImportError:
     # langhost automatically flushes stdout and stderr on shutdown, so we don't need to do it here - just trust that
     # Python does the sane thing when printing to stderr.
     print(traceback.format_exc(), file=sys.stderr)
-    print("""
+    print(f"""
 It looks like the Pulumi SDK has not been installed. Have you run pip install?
-If you are running in a virtualenv, you must run pip install -r requirements.txt from inside the virtualenv.""", file=sys.stderr)
+If you are running in a virtualenv, you must run pip install -r requirements.txt from inside the virtualenv.
+
+    sys.executable = {sys.executable}
+
+    """, file=sys.stderr)
     sys.exit(1)
 
 if __name__ == "__main__":
