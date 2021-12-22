@@ -10,7 +10,7 @@ yarn link @pulumi/pulumi
 yarn run tsc
 
 cd ../testcomponent-go
-go build -o pulumi-resource-testcomponent
+go build -o "pulumi-resource-testcomponent$(go env GOEXE)"
 
 cd ../testcomponent-python
 "$PYTHON" -m venv venv
