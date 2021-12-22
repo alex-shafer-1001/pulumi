@@ -38,8 +38,8 @@ build_plugin::
 build:: build_package build_plugin
 
 install_package:: build
-	cp dist/pulumi-resource-pulumi-nodejs "$(PULUMI_BIN)"
-	cp dist/pulumi-analyzer-policy "$(PULUMI_BIN)"
+	cp dist/pulumi-resource-pulumi-nodejs* "$(PULUMI_BIN)"
+	cp dist/pulumi-analyzer-policy* "$(PULUMI_BIN)"
 
 install_plugin:: build
 	GOBIN=$(PULUMI_BIN) go install -ldflags "-X github.com/pulumi/pulumi/sdk/v3/go/common/version.Version=${VERSION}" ${LANGUAGE_HOST}
