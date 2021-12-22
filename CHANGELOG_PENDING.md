@@ -22,8 +22,11 @@
 
   [#8498](https://github.com/pulumi/pulumi/pull/8498)
 
-### Bug Fixes
+### Bug Fixes 
 
 - [sdk/python] - Fixes an issue with stack outputs persisting after
   they are removed from the Pulumi program
   [#8583](https://github.com/pulumi/pulumi/pull/8583)
+
+- [sdk/{go,nodejs}] - Compute full set of aliases when both parent and child are aliased.
+  [#8627](https://github.com/pulumi/pulumi/pull/8627)
