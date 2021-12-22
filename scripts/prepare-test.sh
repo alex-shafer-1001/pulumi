@@ -14,5 +14,5 @@ go build -o pulumi-resource-testcomponent
 
 cd ../testcomponent-python
 "$PYTHON" -m venv venv
-export PATH=venv/bin:$PATH
+. venv/*/activate
 python -m pip install -e ../../../../sdk/python/env/src
